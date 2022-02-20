@@ -30,8 +30,8 @@ def strike_point(points, frame)
   end
 end
 
-def spare_point(frame_point, next_point)
-  frame_point + next_point
+def spare_point(first_point, second_point, next_point)
+  first_point + second_point + next_point
 end
 
 throw_results = ARGV.shift.split(',')
@@ -50,7 +50,7 @@ frames.each do |frame|
   end
 
   if point_for_frame(first_point, second_point) == 10
-    sum_score += spare_point(point_for_frame(first_point, second_point), points[0])
+    sum_score += spare_point(first_point, second_point, points[0])
     next
   end
 
