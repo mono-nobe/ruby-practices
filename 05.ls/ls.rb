@@ -20,13 +20,16 @@ def remove_hidden_dir_items(dir_items)
 end
 
 def generate_rows(dir_items, row_count)
-  rows = []
-  row_count.times { rows.push([]) }
+  rows = Array.new(row_count) { [] }
 
   row_index = 0
   dir_items.each do |dir_item|
     rows[row_index].push(dir_item)
-    row_index == row_count - 1 ? row_index = 0 : row_index += 1
+    if row_index == row_count - 1
+      row_index = 0
+    else
+      row_index += 1
+    end
   end
 
   rows
