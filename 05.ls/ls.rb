@@ -4,40 +4,40 @@
 
 NUM_OF_COLUMNS = 3
 
-def calc_num_of_row(num_of_objects)
-  (num_of_objects / NUM_OF_COLUMNS.to_f).ceil
+def calc_num_of_row(num_of_dir_items)
+  (num_of_dir_items / NUM_OF_COLUMNS.to_f).ceil
 end
 
-def ljust_objects(objects)
-  max_length_of_object_name = objects.max_by(&:length).length + 1
-  objects.map do |object|
-    object.ljust(max_length_of_object_name)
+def ljust_dir_items(dir_items)
+  max_length_of_dir_item_name = dir_items.max_by(&:length).length + 1
+  dir_items.map do |dir_item|
+    dir_item.ljust(max_length_of_dir_item_name)
   end
 end
 
-def remove_hidden_objects(objects)
-  objects.delete_if { |object| object.match?(/^\./) }
+def remove_hidden_dir_items(dir_items)
+  dir_items.delete_if { |dir_item| dir_item.match?(/^\./) }
 end
 
-def generate_rows(objects, num_of_row)
+def generate_rows(dir_items, num_of_row)
   rows = []
   num_of_row.times { rows.push([]) }
 
   row_index = 0
-  objects.each do |object|
-    rows[row_index].push(object)
+  dir_items.each do |dir_item|
+    rows[row_index].push(dir_item)
     row_index == num_of_row - 1 ? row_index = 0 : row_index += 1
   end
 
   rows
 end
 
-objects = Dir.entries('.').sort
-ljusted_objects = ljust_objects(objects)
+dir_items = Dir.entries('.').sort
+ljusted_dir_items = ljust_dir_items(dir_items)
 
 rows = generate_rows(
-  remove_hidden_objects(ljusted_objects),
-  calc_num_of_row(ljusted_objects.size)
+  remove_hidden_dir_items(ljusted_dir_items),
+  calc_num_of_row(ljusted_dir_items.size)
 )
 
 rows.each { |row| puts row.join }
