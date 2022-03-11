@@ -16,7 +16,7 @@ def ljust_dir_items(dir_items)
 end
 
 def remove_hidden_dir_items(dir_items)
-  dir_items.delete_if { |dir_item| dir_item.match?(/^\./) }
+  dir_items.reject { |dir_item| dir_item.match?(/^\./) }
 end
 
 def generate_rows(dir_items, row_count)
@@ -34,10 +34,11 @@ end
 
 dir_items = Dir.entries('.').sort
 ljusted_dir_items = ljust_dir_items(dir_items)
+removed_hidden_dir_items = remove_hidden_dir_items(ljusted_dir_items)
 
 rows = generate_rows(
-  remove_hidden_dir_items(ljusted_dir_items),
-  calc_row_count(ljusted_dir_items.size)
+  removed_hidden_dir_items,
+  calc_row_count(removed_hidden_dir_items.size)
 )
 
 rows.each { |row| puts row.join }
