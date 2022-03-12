@@ -4,14 +4,26 @@
 
 COLUMN_COUNT = 3
 
+def main
+  dir_items = Dir.entries('.').sort
+  removed_hidden_dir_items = remove_hidden_dir_items(dir_items)
+  max_name_length = removed_hidden_dir_items.max_by(&:length).length
+
+  rows = generate_rows(
+    ljust_dir_items(max_name_length, removed_hidden_dir_items),
+    calc_row_count(removed_hidden_dir_items.size)
+  )
+
+  rows.each { |row| puts row.join }
+end
+
 def calc_row_count(dir_items_count)
   (dir_items_count / COLUMN_COUNT.to_f).ceil
 end
 
-def ljust_dir_items(dir_items)
-  max_length_of_dir_item_name = dir_items.max_by(&:length).length + 1
+def ljust_dir_items(max_name_length, dir_items)
   dir_items.map do |dir_item|
-    dir_item.ljust(max_length_of_dir_item_name)
+    dir_item.ljust(max_name_length + 1)
   end
 end
 
@@ -35,13 +47,4 @@ def generate_rows(dir_items, row_count)
   rows
 end
 
-dir_items = Dir.entries('.').sort
-ljusted_dir_items = ljust_dir_items(dir_items)
-removed_hidden_dir_items = remove_hidden_dir_items(ljusted_dir_items)
-
-rows = generate_rows(
-  removed_hidden_dir_items,
-  calc_row_count(removed_hidden_dir_items.size)
-)
-
-rows.each { |row| puts row.join }
+main
