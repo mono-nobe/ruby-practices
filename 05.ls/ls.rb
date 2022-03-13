@@ -6,12 +6,12 @@ COLUMN_COUNT = 3
 
 def main
   dir_items = Dir.entries('.').sort
-  removed_hidden_dir_items = remove_hidden_dir_items(dir_items)
-  max_name_length = removed_hidden_dir_items.max_by(&:length).length
+  filtered_dir_items = filter_hidden_dir_items(dir_items)
+  max_name_length = filtered_dir_items.max_by(&:length).length
 
   rows = generate_rows(
-    ljust_dir_items(max_name_length, removed_hidden_dir_items),
-    calc_row_count(removed_hidden_dir_items.size)
+    ljust_dir_items(max_name_length, filtered_dir_items),
+    calc_row_count(filtered_dir_items.size)
   )
 
   rows.each { |row| puts row.join }
@@ -27,21 +27,15 @@ def ljust_dir_items(max_name_length, dir_items)
   end
 end
 
-def remove_hidden_dir_items(dir_items)
-  dir_items.reject { |dir_item| dir_item.match?(/^\./) }
+def filter_hidden_dir_items(dir_items)
+  dir_items.reject { |dir_item| dir_item.start_with?(/^\./) }
 end
 
 def generate_rows(dir_items, row_count)
   rows = Array.new(row_count) { [] }
 
-  row_index = 0
-  dir_items.each do |dir_item|
-    rows[row_index].push(dir_item)
-    if row_index == row_count - 1
-      row_index = 0
-    else
-      row_index += 1
-    end
+  dir_items.each_with_index do |dir_item, index|
+    rows[index % row_count].push(dir_item)
   end
 
   rows
