@@ -28,7 +28,7 @@ def ljust_dir_items(max_name_length, dir_items)
 end
 
 def filter_hidden_dir_items(dir_items)
-  dir_items.reject { |dir_item| dir_item.start_with?(/^\./) }
+  dir_items.reject { |dir_item| dir_item.start_with?('.') }
 end
 
 def generate_rows(dir_items, row_count)
