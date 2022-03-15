@@ -2,6 +2,8 @@
 
 # frozen_string_literal: true
 
+# test
+
 POINT_SIZE_FOR_NINE_FRAME = 18
 
 def point_for_frame(first_score, second_score)
