@@ -2,16 +2,33 @@
 
 # frozen_string_literal: true
 
+require 'optparse'
+
 COLUMN_COUNT = 3
 
 def main
+  is_option_all = false
+
+  opt = OptionParser.new
+  opt.on('-a') do |has_value|
+    is_option_all = true if has_value
+  end
+  opt.parse!(ARGV)
+
   dir_items = Dir.entries('.').sort
-  filtered_dir_items = filter_hidden_dir_items(dir_items)
-  max_name_length = filtered_dir_items.max_by(&:length).length
+
+  show_items = []
+  if is_option_all
+    show_items.concat(dir_items)
+  else
+    show_items.concat(filter_hidden_dir_items(dir_items))
+  end
+
+  max_name_length = show_items.max_by(&:length).length
 
   rows = generate_rows(
-    ljust_dir_items(max_name_length, filtered_dir_items),
-    calc_row_count(filtered_dir_items.size)
+    ljust_dir_items(max_name_length, show_items),
+    calc_row_count(show_items.size)
   )
 
   rows.each { |row| puts row.join }
