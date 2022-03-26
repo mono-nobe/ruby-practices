@@ -10,25 +10,16 @@ def main
   is_option_all = false
 
   opt = OptionParser.new
-  opt.on('-a') do |has_value|
-    is_option_all = true if has_value
-  end
+  opt.on('-a') { is_option_all = true }
   opt.parse!(ARGV)
 
-  dir_items = Dir.entries('.').sort
+  showed_items = is_option_all ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
 
-  show_items = []
-  if is_option_all
-    show_items.concat(dir_items)
-  else
-    show_items.concat(filter_hidden_dir_items(dir_items))
-  end
-
-  max_name_length = show_items.max_by(&:length).length
+  max_name_length = showed_items.max_by(&:length).length
 
   rows = generate_rows(
-    ljust_dir_items(max_name_length, show_items),
-    calc_row_count(show_items.size)
+    ljust_dir_items(max_name_length, showed_items),
+    calc_row_count(showed_items.size)
   )
 
   rows.each { |row| puts row.join }
@@ -42,10 +33,6 @@ def ljust_dir_items(max_name_length, dir_items)
   dir_items.map do |dir_item|
     dir_item.ljust(max_name_length + 1)
   end
-end
-
-def filter_hidden_dir_items(dir_items)
-  dir_items.reject { |dir_item| dir_item.start_with?('.') }
 end
 
 def generate_rows(dir_items, row_count)
