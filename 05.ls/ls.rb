@@ -8,12 +8,15 @@ COLUMN_COUNT = 3
 
 def main
   is_option_all = false
+  is_reverse = false
 
   opt = OptionParser.new
   opt.on('-a') { is_option_all = true }
+  opt.on('-r') { is_reverse = true }
   opt.parse!(ARGV)
 
   file_names = is_option_all ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+  file_names.reverse! if is_reverse
 
   max_name_length = file_names.max_by(&:length).length
 
