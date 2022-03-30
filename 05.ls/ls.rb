@@ -2,16 +2,24 @@
 
 # frozen_string_literal: true
 
+require 'optparse'
+
 COLUMN_COUNT = 3
 
 def main
-  dir_items = Dir.entries('.').sort
-  filtered_dir_items = filter_hidden_dir_items(dir_items)
-  max_name_length = filtered_dir_items.max_by(&:length).length
+  is_option_all = false
+
+  opt = OptionParser.new
+  opt.on('-a') { is_option_all = true }
+  opt.parse!(ARGV)
+
+  file_names = is_option_all ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+
+  max_name_length = file_names.max_by(&:length).length
 
   rows = generate_rows(
-    ljust_dir_items(max_name_length, filtered_dir_items),
-    calc_row_count(filtered_dir_items.size)
+    ljust_dir_items(max_name_length, file_names),
+    calc_row_count(file_names.size)
   )
 
   rows.each { |row| puts row.join }
@@ -25,10 +33,6 @@ def ljust_dir_items(max_name_length, dir_items)
   dir_items.map do |dir_item|
     dir_item.ljust(max_name_length + 1)
   end
-end
-
-def filter_hidden_dir_items(dir_items)
-  dir_items.reject { |dir_item| dir_item.start_with?('.') }
 end
 
 def generate_rows(dir_items, row_count)
