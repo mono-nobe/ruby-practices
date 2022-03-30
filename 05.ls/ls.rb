@@ -13,13 +13,13 @@ def main
   opt.on('-a') { is_option_all = true }
   opt.parse!(ARGV)
 
-  showed_items = is_option_all ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+  file_names = is_option_all ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
 
-  max_name_length = showed_items.max_by(&:length).length
+  max_name_length = file_names.max_by(&:length).length
 
   rows = generate_rows(
-    ljust_dir_items(max_name_length, showed_items),
-    calc_row_count(showed_items.size)
+    ljust_dir_items(max_name_length, file_names),
+    calc_row_count(file_names.size)
   )
 
   rows.each { |row| puts row.join }
