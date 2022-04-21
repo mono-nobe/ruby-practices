@@ -8,18 +8,21 @@ COLUMN_COUNT = 3
 
 def main
   is_option_all = false
+  is_reverse = false
 
   opt = OptionParser.new
   opt.on('-a') { is_option_all = true }
+  opt.on('-r') { is_reverse = true }
   opt.parse!(ARGV)
 
   file_names = is_option_all ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+  sorted_file_names = is_reverse ? file_names.reverse : file_names
 
-  max_name_length = file_names.max_by(&:length).length
+  max_name_length = sorted_file_names.max_by(&:length).length
 
   rows = generate_rows(
-    ljust_dir_items(max_name_length, file_names),
-    calc_row_count(file_names.size)
+    ljust_dir_items(max_name_length, sorted_file_names),
+    calc_row_count(sorted_file_names.size)
   )
 
   rows.each { |row| puts row.join }
