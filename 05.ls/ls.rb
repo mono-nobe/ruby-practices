@@ -49,96 +49,61 @@ def main
   end
 end
 
-def show_file_details(file_name)
-  extracted_details = extract_detail(generate_details, file_name)
-  formed_details = form_details(extracted_details)
+def show_file_details(file_names)
+  details = extract_details(file_names)
+  total_blocks = details.sum { |detail| detail[:blocks] }
+  max_hard_link_length = calc_max_string_length(details, :hard_link)
+  max_user_name_length = calc_max_string_length(details, :user_name)
+  max_group_name_length = calc_max_string_length(details, :group_name)
+  max_size_length = calc_max_string_length(details, :size)
 
-  puts "total #{formed_details['blocks'].sum}"
+  puts "total #{total_blocks}"
+  details.map do |detail|
+    hard_link = detail[:hard_link].to_s.rjust(max_hard_link_length)
+    user_name = detail[:user_name].ljust(max_user_name_length)
+    group_name = detail[:group_name].ljust(max_group_name_length)
+    size = detail[:size].to_s.rjust(max_size_length)
 
-  formed_details['file_names'].each_with_index do |_, index|
-    show_item = []
-    show_item.push(formed_details['symbolic_modes'][index])
-    show_item.push(formed_details['hard_link_strings'][index])
-    show_item.push(formed_details['user_names'][index])
-    show_item.push(formed_details['group_names'][index])
-    show_item.push(formed_details['size_strings'][index])
-    show_item.push(formed_details['updated_times'][index])
-    show_item.push(formed_details['file_names'][index])
-
-    puts show_item.join(' ')
+    puts "#{detail[:symbolic_mode]} #{hard_link} #{user_name} #{group_name} #{size} #{detail[:updated_time]} #{detail[:file_name]}"
   end
 end
 
-def generate_details
-  {
-    'blocks' => [],
-    'symbolic_modes' => [],
-    'hard_link_strings' => [],
-    'user_names' => [],
-    'group_names' => [],
-    'size_strings' => [],
-    'updated_times' => [],
-    'file_names' => []
-  }
+def calc_max_string_length(details, key)
+  max_length = 0
+  details.each do |detail|
+    length = detail[key].is_a?(String) ? detail[key].length : detail[key].to_s.length
+    max_length = length > max_length ? length : max_length
+  end
+
+  max_length
 end
 
-def extract_detail(details, file_names)
+def extract_details(file_names)
+  details = []
   file_names.map do |file_name|
     file = File::Stat.new("./#{file_name}")
 
-    details['blocks'].push(file.blocks)
-    details['symbolic_modes'].push(file_symbolic_mode(file))
-    details['hard_link_strings'].push(file.nlink.to_s)
-    details['user_names'].push(file_user_name(file))
-    details['group_names'].push(file_group_name(file))
-    details['size_strings'].push(file.size.to_s)
-    details['updated_times'].push(format_file_time(file))
-    details['file_names'].push(file_name)
+    details << {
+      blocks: file.blocks,
+      symbolic_mode: file_symbolic_mode(file),
+      hard_link: file.nlink,
+      user_name: file_user_name(file),
+      group_name: file_group_name(file),
+      size: file.size,
+      updated_time: format_file_time(file),
+      file_name: file_name
+    }
   end
 
   details
-end
-
-def form_details(details)
-  max_hard_link_string_length = details['hard_link_strings'].max_by(&:length).length
-  details['hard_link_strings'] = rjust_items(max_hard_link_string_length, details['hard_link_strings'])
-
-  max_user_name_length = details['user_names'].max_by(&:length).length
-  details['user_names'] = ljust_items(max_user_name_length, details['user_names'])
-
-  max_group_name_length = details['group_names'].max_by(&:length).length
-  details['group_names'] = ljust_items(max_group_name_length, details['group_names'])
-
-  max_sizes_length = details['size_strings'].max_by(&:length).length
-  details['size_strings'] = rjust_items(max_sizes_length, details['size_strings'])
-
-  details
-end
-
-def show_file_names(file_names)
-  max_name_length = file_names.max_by(&:length).length
-
-  rows = generate_rows(
-    ljust_items(max_name_length, file_names),
-    calc_row_count(file_names.size)
-  )
-  rows.each { |row| puts row.join(' ') }
-end
-
-def convert_to_symbolic_type(file_octal_type)
-  FILE_TYPE[file_octal_type]
-end
-
-def convert_to_symbolic_permission(file_octal_permission)
-  FILE_PERMISSION[file_octal_permission]
 end
 
 def file_symbolic_mode(file)
   octal_mode = file.mode.to_s(8)
 
-  symbolic_type = convert_to_symbolic_type(octal_mode[0..-5])
+  symbolic_type = FILE_TYPE[octal_mode[0..-5]]
   symbolic_permissions = octal_mode[-3..].chars.map do |octal_permission|
-    convert_to_symbolic_permission(octal_permission)
+    FILE_PERMISSION[octal_permission]
   end
 
   symbolic_type + symbolic_permissions.join('')
@@ -156,20 +121,14 @@ def format_file_time(file)
   file.mtime.strftime('%b %d %R')
 end
 
-def calc_row_count(dir_items_count)
-  (dir_items_count / COLUMN_COUNT.to_f).ceil
-end
+def show_file_names(file_names)
+  max_name_length = file_names.max_by(&:length).length
 
-def ljust_items(max_name_length, dir_items)
-  dir_items.map do |dir_item|
-    dir_item.ljust(max_name_length)
-  end
-end
-
-def rjust_items(max_name_length, dir_items)
-  dir_items.map do |dir_item|
-    dir_item.rjust(max_name_length)
-  end
+  rows = generate_rows(
+    ljust_items(max_name_length, file_names),
+    calc_row_count(file_names.size)
+  )
+  rows.each { |row| puts row.join(' ') }
 end
 
 def generate_rows(dir_items, row_count)
@@ -180,6 +139,16 @@ def generate_rows(dir_items, row_count)
   end
 
   rows
+end
+
+def calc_row_count(dir_items_count)
+  (dir_items_count / COLUMN_COUNT.to_f).ceil
+end
+
+def ljust_items(max_name_length, dir_items)
+  dir_items.map do |dir_item|
+    dir_item.ljust(max_name_length)
+  end
 end
 
 main
