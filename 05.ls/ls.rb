@@ -29,17 +29,17 @@ FILE_PERMISSION = {
 }.freeze
 
 def main
-  is_option_all = false
+  is_all = false
   is_reverse = false
   is_detail = false
 
   opt = OptionParser.new
-  opt.on('-a') { is_option_all = true }
+  opt.on('-a') { is_all = true }
   opt.on('-r') { is_reverse = true }
   opt.on('-l') { is_detail = true }
   opt.parse!(ARGV)
 
-  file_names = is_option_all ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+  file_names = is_all ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
   sorted_file_names = is_reverse ? file_names.reverse : file_names
 
   if is_detail
@@ -69,21 +69,18 @@ def show_file_details(file_names)
 end
 
 def calc_max_string_length(details, key)
-  max_length = 0
-  details.each do |detail|
-    length = detail[key].is_a?(String) ? detail[key].length : detail[key].to_s.length
-    max_length = length > max_length ? length : max_length
+  value_strings = details.map do |detail|
+    detail[key].to_s
   end
 
-  max_length
+  value_strings.max_by(&:length).length
 end
 
 def extract_details(file_names)
-  details = []
   file_names.map do |file_name|
     file = File::Stat.new("./#{file_name}")
 
-    details << {
+    {
       blocks: file.blocks,
       symbolic_mode: file_symbolic_mode(file),
       hard_link: file.nlink,
@@ -94,8 +91,6 @@ def extract_details(file_names)
       file_name: file_name
     }
   end
-
-  details
 end
 
 def file_symbolic_mode(file)
@@ -106,7 +101,7 @@ def file_symbolic_mode(file)
     FILE_PERMISSION[octal_permission]
   end
 
-  symbolic_type + symbolic_permissions.join('')
+  symbolic_type + symbolic_permissions.join
 end
 
 def file_user_name(file)
