@@ -69,11 +69,9 @@ def show_file_details(file_names)
 end
 
 def calc_max_string_length(details, key)
-  value_strings = details.map do |detail|
+  details.map do |detail|
     detail[key].to_s
-  end
-
-  value_strings.max_by(&:length).length
+  end.max_by(&:length).length
 end
 
 def extract_details(file_names)
