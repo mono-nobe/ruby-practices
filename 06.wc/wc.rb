@@ -17,6 +17,8 @@ end
 
 def show_file_details
   file_details = calc_file_details
+  return if file_details.size.zero?
+
   file_details.push(
     {
       line_count: calc_total_value(file_details, :line_count),
@@ -61,6 +63,10 @@ end
 
 def calc_file_details
   ARGV.map do |file_name|
+    if Dir.glob(file_name).size.zero?
+      puts "wc: #{file_name}: No such file or directory"
+      next
+    end
     file = File.open(file_name)
 
     words = []
@@ -76,7 +82,7 @@ def calc_file_details
       size: file.size,
       file_name: file_name
     }
-  end
+  end.compact
 end
 
 main
