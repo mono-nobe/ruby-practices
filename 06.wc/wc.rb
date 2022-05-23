@@ -4,21 +4,21 @@
 require 'optparse'
 
 SINGLE_FILE_COUNT = 2
+$IS_LINE = false
 
 def main
-  is_line = false
   opt = OptionParser.new
-  opt.on('-l') { is_line = true }
+  opt.on('-l') { $IS_LINE = true }
   opt.parse!(ARGV)
 
   if !ARGV.empty?
-    show_file_details(is_line)
+    show_file_details
   else
-    show_stdin_details(is_line)
+    show_stdin_details
   end
 end
 
-def show_file_details(is_line)
+def show_file_details
   file_details = calc_file_details
   return if file_details.size.zero?
 
@@ -38,15 +38,15 @@ def show_file_details(is_line)
     file_name: calc_max_value_length(file_details, :file_name)
   }
 
-  print_file_details(file_details, max_detail_length, is_line)
+  print_file_details(file_details, max_detail_length)
 end
 
-def print_file_details(file_details, max_detail_length, is_line)
+def print_file_details(file_details, max_detail_length)
   details = file_details.size == SINGLE_FILE_COUNT ? file_details.slice(0..0) : file_details
 
   details.map do |detail|
     print detail[:line_count].to_s.rjust(max_detail_length[:line_count])
-    unless is_line
+    unless $IS_LINE
       print " #{detail[:word_count].to_s.rjust(max_detail_length[:word_count])}"
       print " #{detail[:size].to_s.rjust(max_detail_length[:size])}"
     end
@@ -61,9 +61,7 @@ def calc_max_value_length(hashes, key)
 end
 
 def calc_total_value(details, key)
-  details.map do |detail|
-    detail[key]
-  end.sum
+  details.sum { |detail| detail[key] }
 end
 
 def calc_file_details
@@ -90,7 +88,7 @@ def calc_file_details
   end.compact
 end
 
-def show_stdin_details(is_line)
+def show_stdin_details
   strings = $stdin.readlines
 
   word_count = strings.map do |string|
@@ -103,11 +101,11 @@ def show_stdin_details(is_line)
     byte: strings.join.bytesize
   }
 
-  print_stdin_details(details, is_line)
+  print_stdin_details(details)
 end
 
-def print_stdin_details(detail, is_line)
-  if is_line
+def print_stdin_details(detail)
+  if $IS_LINE
     puts detail[:row]
   else
     puts "#{detail[:row]} #{detail[:word_count]} #{detail[:byte]}"
