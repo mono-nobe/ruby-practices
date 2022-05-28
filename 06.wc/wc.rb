@@ -4,14 +4,9 @@
 require 'optparse'
 
 SINGLE_FILE_COUNT = 2
-$IS_LINE = false
 
 def main
-  opt = OptionParser.new
-  opt.on('-l') { $IS_LINE = true }
-  opt.parse!(ARGV)
-
-  if !ARGV.empty?
+  if file?
     show_file_details
   else
     show_stdin_details
@@ -46,7 +41,7 @@ def print_file_details(file_details, max_detail_length)
 
   details.map do |detail|
     print detail[:line_count].to_s.rjust(max_detail_length[:line_count])
-    unless $IS_LINE
+    unless line?
       print " #{detail[:word_count].to_s.rjust(max_detail_length[:word_count])}"
       print " #{detail[:size].to_s.rjust(max_detail_length[:size])}"
     end
@@ -105,11 +100,23 @@ def show_stdin_details
 end
 
 def print_stdin_details(detail)
-  if $IS_LINE
+  if line?
     puts detail[:row]
   else
     puts "#{detail[:row]} #{detail[:word_count]} #{detail[:byte]}"
   end
+end
+
+def file?
+  !ARGV.reject { |argument| argument == '-l' }.empty?
+end
+
+def line?
+  is_line = false
+  opt = OptionParser.new
+  opt.on('-l') { is_line = true }
+  opt.parse(ARGV)
+  is_line
 end
 
 main
