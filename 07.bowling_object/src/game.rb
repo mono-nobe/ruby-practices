@@ -10,7 +10,7 @@ class Game
   attr_reader :marks, :frames
 
   def initialize(marks)
-    @marks = marks.split(',')
+    @marks = marks.shift.split(',')
     @frames = devided_mark_sets.map do |devided_mark_set|
       Frame.new(devided_mark_set[0], devided_mark_set[1], devided_mark_set[2])
     end
