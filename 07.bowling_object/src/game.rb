@@ -7,8 +7,6 @@ SHOT_COUNTS_BY_FRAME = 2
 
 # Gameクラスは各フレームのスコアを保持するオブジェクト
 class Game
-  attr_reader :marks, :frames
-
   def initialize(marks)
     @marks = marks.shift.split(',')
     @frames = devided_mark_sets.map do |devided_mark_set|
@@ -18,7 +16,7 @@ class Game
 
   def devided_mark_sets
     devided_mark_sets = []
-    marks.each do |mark|
+    @marks.each do |mark|
       devided_mark_sets << [] if next_frame?(devided_mark_sets)
       devided_mark_sets.last.push(mark)
     end
