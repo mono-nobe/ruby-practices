@@ -22,6 +22,11 @@ class TestCaseFrame < Test::Unit::TestCase
     refute frame.spare?
   end
 
+  test 'スペアではない(1球目で10本倒す)' do
+    frame = Frame.new(10, 0)
+    refute frame.spare?
+  end
+
   # strike?のテスト
   test 'ストライクである' do
     frame = Frame.new(10, 0)
