@@ -5,31 +5,40 @@ require_relative '../src/game'
 
 # Gameクラスのテスト
 class TestCaseGame < Test::Unit::TestCase
-  # compensate_marksのテスト
-  test 'ストライクが存在する' do
-    game = Game.new([1, 2, 'X', 3, 4])
-    assert_equal [1, 2, 'X', 0, 3, 4], game.compensated_marks
-  end
-
-  test 'ストライクが存在しない' do
-    game = Game.new([1, 2, 3, 4, 5, 6])
-    assert_equal [1, 2, 3, 4, 5, 6], game.compensated_marks
-  end
-
-  # self.divide_marks_by_frameのテスト
-  test '投球が6回(2+2+2)' do
-    divided_marks = Game.divide_marks_by_frame([0, 1, 2, 3, 4, 5])
-    assert_equal [[0, 1], [2, 3], [4, 5]], divided_marks
-  end
-
-  test '投球が7回(2+2+3)' do
-    divided_marks = Game.divide_marks_by_frame([0, 1, 2, 3, 4, 5, 6])
-    assert_equal [[0, 1], [2, 3], [4, 5, 6]], divided_marks
+  test 'gameの生成' do
+    game = Game.new('6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,6,4,5')
+    assert_equal %w[6 3 9 0 0 3 8 2 7 3 X 9 1 8 0 X 6 4 5],
+                 game.marks
   end
 
   # scoreのテスト
-  # test '6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,6,4,5の場合' do
-  #   game = Game.new([6, 3, 9, 0, 0, 3, 8, 2, 7, 3, 'X', 9, 1, 8, 0, 'X', 6, 4, 5])
-  #   assert_equal 139, game.marks
-  # end
+  test '6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,6,4,5の場合' do
+    game = Game.new('6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,6,4,5')
+    assert_equal 139, game.score
+  end
+
+  test '6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,X,X,Xの場合' do
+    game = Game.new('6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,X,X,X')
+    assert_equal 164, game.score
+  end
+
+  test '0,10,1,5,0,0,0,0,X,X,X,5,1,8,1,0,4の場合' do
+    game = Game.new('0,10,1,5,0,0,0,0,X,X,X,5,1,8,1,0,4')
+    assert_equal 107, game.score
+  end
+
+  test '6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,X,0,0の場合' do
+    game = Game.new('6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,X,0,0')
+    assert_equal 134, game.score
+  end
+
+  test '6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,X,1,8の場合' do
+    game = Game.new('6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,X,1,8')
+    assert_equal 144, game.score
+  end
+
+  test 'X,X,X,X,X,X,X,X,X,X,X,Xの場合' do
+    game = Game.new('X,X,X,X,X,X,X,X,X,X,X,X')
+    assert_equal 300, game.score
+  end
 end

@@ -4,42 +4,79 @@ require_relative './frame'
 
 # Gameクラスは各フレームのスコアを保持するオブジェクト
 class Game
-  attr_reader :frames
+  attr_reader :marks, :frames
 
   def initialize(marks)
-    @marks = marks
-    @frames = Game.divide_marks_by_frame(compensated_marks).map do |divided_marks|
-      Frame.new(divided_marks[0], divided_marks[1], divided_marks[2])
+    @marks = marks.split(',')
+    @frames = devided_marks.map do |mark|
+      Frame.new(mark[0], mark[1], mark[2])
     end
   end
 
-  def self.divide_marks_by_frame(marks)
-    divided_marks = []
-    marks.each_slice(2) do |first_mark, second_mark|
-      divided_marks.push([first_mark, second_mark])
-      break if second_mark.nil?
+  def devided_marks
+    devided_marks = []
+    marks.each do |mark|
+      devided_marks << [] if next_frame?(devided_marks)
+      devided_marks.last.push(mark)
     end
 
-    # 最後の投球が3回の場合は1つにまとめる
-    unless (marks.size % 2).zero?
-      last_mark = divided_marks.pop
-      divided_marks.last(1)[0].concat(last_mark.compact)
-    end
-
-    divided_marks
-  end
-
-  def compensated_marks
-    compensated_marks = []
-    @marks.each do |mark|
-      compensated_marks.push(mark)
-      compensated_marks.push(0) if mark == 'X'
-    end
-
-    compensated_marks
+    devided_marks
   end
 
   def score
-    total = 0
+    score = 0
+
+    @frames.each_with_index do |frame, index|
+      score += frame.score
+      score += bonus_score(frame, index) unless index == 9
+    end
+
+    score
+  end
+
+  def bonus_score(frame, index)
+    if frame.strike?
+      strike_bonus(index)
+    elsif frame.spare?
+      @frames[index + 1].first_shot.score
+    else
+      0
+    end
+  end
+
+  def strike_bonus(index)
+    if index == 8
+      last_strike_bonus
+    elsif @frames[index + 1].strike?
+      @frames[index + 1].score + @frames[index + 2].first_shot.score
+    else
+      @frames[index + 1].score
+    end
+  end
+
+  def last_strike_bonus
+    @frames[9].first_shot.score + @frames[9].second_shot.score
+  end
+
+  def next_frame?(frame)
+    return true if first_frame?(frame)
+
+    !last_frame?(frame) && (full_shot?(frame) || strike?(frame))
+  end
+
+  def first_frame?(frame)
+    frame.size.zero?
+  end
+
+  def strike?(frame)
+    frame.last.first == 'X'
+  end
+
+  def full_shot?(frame)
+    frame.last.size == 2
+  end
+
+  def last_frame?(frame)
+    frame.size == 10
   end
 end
