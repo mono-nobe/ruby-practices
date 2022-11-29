@@ -5,12 +5,6 @@ require_relative '../src/shot'
 
 # Shotクラスのテスト
 class TestCaseShot < Test::Unit::TestCase
-  # def setup
-  # end
-
-  # def teardown
-  # end
-
   test '3本倒した時のスコア' do
     shot = Shot.new(3)
     assert_equal 3, shot.score
