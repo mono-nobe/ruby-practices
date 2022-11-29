@@ -9,19 +9,9 @@ SHOT_COUNTS_BY_FRAME = 2
 class Game
   def initialize(marks)
     @marks = marks.shift.split(',')
-    @frames = devided_mark_sets.map do |devided_mark_set|
+    @frames = devide_marks_by_frame.map do |devided_mark_set|
       Frame.new(devided_mark_set[0], devided_mark_set[1], devided_mark_set[2])
     end
-  end
-
-  def devided_mark_sets
-    devided_mark_sets = []
-    @marks.each do |mark|
-      devided_mark_sets << [] if next_frame?(devided_mark_sets)
-      devided_mark_sets.last.push(mark)
-    end
-
-    devided_mark_sets
   end
 
   def score
@@ -79,5 +69,17 @@ class Game
 
   def last_frame?(frame)
     frame.size == TOTAL_FRAME_COUNTS
+  end
+
+  private
+
+  def devide_marks_by_frame
+    sets_of_marks = []
+    @marks.each do |mark|
+      sets_of_marks << [] if next_frame?(sets_of_marks)
+      sets_of_marks.last.push(mark)
+    end
+
+    sets_of_marks
   end
 end
