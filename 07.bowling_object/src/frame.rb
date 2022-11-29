@@ -2,7 +2,8 @@
 
 require_relative './shot'
 
-# Frameクラスは各フレームのスコアを保持するオブジェクト
+# 各フレームのスコアを計算する
+# ストライクやスペアの判定も行う
 class Frame
   attr_reader :first_shot,
               :second_shot,

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Shotクラスはスコアを保持するオブジェクト
+# 倒れたピンの本数を返す
 class Shot
   def initialize(mark)
     @mark = mark
