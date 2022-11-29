@@ -2,28 +2,61 @@
 
 require_relative './shot'
 
+MAX_PIN_COUNTS_BY_FRAME = 10
+
 # 各フレームのスコアを計算する
 # ストライクやスペアの判定も行う
 class Frame
-  attr_reader :first_shot,
-              :second_shot,
-              :third_shot
+  attr_reader :shots
 
-  def initialize(first_mark, second_mark = nil, third_mark = nil)
-    @first_shot = Shot.new(first_mark)
-    @second_shot = Shot.new(second_mark)
-    @third_shot = Shot.new(third_mark)
+  def initialize(marks)
+    @shots = marks.map do |mark|
+      Shot.new(mark)
+    end
   end
 
-  def score
-    first_shot.score + second_shot.score + third_shot.score
+  def calc_frame_total_score(leftover_frames)
+    frame_score = calc_frame_score
+    frame_score += calc_bonus_score(leftover_frames) unless leftover_frames.size == 1
+
+    frame_score
   end
 
-  def spare?
-    first_shot.score != 10 && first_shot.score + second_shot.score == 10
+  def calc_frame_score
+    @shots.map(&:score).sum
   end
 
   def strike?
-    first_shot.score == 10
+    @shots[0].score == MAX_PIN_COUNTS_BY_FRAME
+  end
+
+  def spare?
+    @shots[0].score != MAX_PIN_COUNTS_BY_FRAME && @shots[0].score + @shots[1].score == MAX_PIN_COUNTS_BY_FRAME
+  end
+
+  private
+
+  def calc_bonus_score(leftover_frames)
+    if strike?
+      calc_strike_bonus_score(leftover_frames)
+    elsif spare?
+      leftover_frames[1].shots[0].score
+    else
+      0
+    end
+  end
+
+  def calc_strike_bonus_score(leftover_frames)
+    if leftover_frames.size == 2
+      calc_last_strike_bonus_score(leftover_frames.last)
+    elsif leftover_frames[1].strike?
+      leftover_frames[1].calc_frame_score + leftover_frames[2].shots[0].score
+    else
+      leftover_frames[1].calc_frame_score
+    end
+  end
+
+  def calc_last_strike_bonus_score(last_frames)
+    last_frames.shots[0].score + last_frames.shots[1].score
   end
 end
