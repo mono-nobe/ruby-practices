@@ -15,14 +15,14 @@ class Frame
     end
   end
 
-  def calc_frame_total_score(leftover_frames)
-    frame_score = calc_frame_score
+  def calc_score(leftover_frames)
+    frame_score = calc_score_without_bonus
     frame_score += calc_bonus_score(leftover_frames) unless leftover_frames.size == 1
 
     frame_score
   end
 
-  def calc_frame_score
+  def calc_score_without_bonus
     @shots.map(&:score).sum
   end
 
@@ -50,9 +50,9 @@ class Frame
     if leftover_frames.size == 2
       calc_last_strike_bonus_score(leftover_frames.last)
     elsif leftover_frames[1].strike?
-      leftover_frames[1].calc_frame_score + leftover_frames[2].shots[0].score
+      leftover_frames[1].calc_score_without_bonus + leftover_frames[2].shots[0].score
     else
-      leftover_frames[1].calc_frame_score
+      leftover_frames[1].calc_score_without_bonus
     end
   end
 

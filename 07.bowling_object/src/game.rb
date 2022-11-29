@@ -18,7 +18,7 @@ class Game
     score = 0
 
     @frames.each_with_index do |frame, index|
-      score += frame.calc_frame_total_score(@frames[index..])
+      score += frame.calc_score(@frames[index..])
     end
 
     score
