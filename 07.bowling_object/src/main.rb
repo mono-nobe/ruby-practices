@@ -4,7 +4,7 @@ require_relative './game'
 
 def main
   game = Game.new(ARGV)
-  puts game.score
+  puts game.calc_score
 end
 
 main
