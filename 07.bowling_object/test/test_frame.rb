@@ -4,10 +4,10 @@ require 'test/unit'
 require_relative '../src/frame'
 
 class TestCaseFrame < Test::Unit::TestCase
-  # test '1回目3本、2回目5本倒した時のスコア' do
-  #   frame = Frame.new([3, 5])
-  #   assert_equal 8, frame.calc_score
-  # end
+  test '1回目3本、2回目5本倒した時のスコア' do
+    frame = Frame.new([3, 5])
+    assert_equal 8, frame.calc_score_without_bonus
+  end
 
   test 'スペアである' do
     frame = Frame.new([4, 6])
