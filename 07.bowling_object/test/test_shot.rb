@@ -3,7 +3,6 @@
 require 'test/unit'
 require_relative '../src/shot'
 
-# Shotクラスのテスト
 class TestCaseShot < Test::Unit::TestCase
   test '3本倒した時のスコア' do
     shot = Shot.new(3)

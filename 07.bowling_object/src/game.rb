@@ -5,7 +5,6 @@ require_relative './frame'
 TOTAL_FRAME_COUNTS = 10
 SHOT_COUNTS_BY_FRAME = 2
 
-# 全投球結果を元に合計スコアを算出する
 class Game
   def initialize(marks)
     @marks = marks.shift.split(',')

@@ -4,8 +4,6 @@ require_relative './shot'
 
 MAX_PIN_COUNTS_BY_FRAME = 10
 
-# 各フレームのスコアを計算する
-# ストライクやスペアの判定も行う
 class Frame
   attr_reader :shots
 

@@ -3,7 +3,6 @@
 require 'test/unit'
 require_relative '../src/frame'
 
-# Frameクラスのテスト
 class TestCaseFrame < Test::Unit::TestCase
   # test '1回目3本、2回目5本倒した時のスコア' do
   #   frame = Frame.new([3, 5])
