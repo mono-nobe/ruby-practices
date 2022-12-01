@@ -7,10 +7,8 @@ MAX_PIN_COUNTS_BY_FRAME = 10
 class Frame
   attr_reader :shots
 
-  def initialize(marks)
-    @shots = marks.map do |mark|
-      Shot.new(mark)
-    end
+  def initialize(shots)
+    @shots = shots
   end
 
   def calc_score(leftover_frames)
@@ -21,15 +19,15 @@ class Frame
   end
 
   def calc_score_without_bonus
-    @shots.map(&:score).sum
+    @shots.sum(&:score)
   end
 
   def strike?
-    @shots[0].score == MAX_PIN_COUNTS_BY_FRAME
+    @shots[0].all_pins?
   end
 
   def spare?
-    @shots[0].score != MAX_PIN_COUNTS_BY_FRAME && @shots[0].score + @shots[1].score == MAX_PIN_COUNTS_BY_FRAME
+    !strike? && @shots[0..1].sum(&:score) == MAX_PIN_COUNTS_BY_FRAME
   end
 
   private
