@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './frame'
+require_relative './shot'
 
 TOTAL_FRAME_COUNTS = 10
 SHOT_COUNTS_BY_FRAME = 2
@@ -8,52 +9,48 @@ SHOT_COUNTS_BY_FRAME = 2
 class Game
   def initialize(marks)
     @marks = marks.split(',')
-    @frames = devide_marks_by_frame.map do |set_of_marks_by_frame|
-      Frame.new(set_of_marks_by_frame)
+    @frames = devide_shots_by_frame.map do |shots_by_frame|
+      Frame.new(shots_by_frame)
     end
   end
 
   def calc_score
-    score = 0
-
-    @frames.each_with_index do |frame, index|
-      score += frame.calc_score(@frames[index..])
+    @frames.each_with_index.sum do |frame, index|
+      frame.calc_score(@frames[index..])
     end
-
-    score
   end
 
   private
 
-  def devide_marks_by_frame
-    sets_of_marks = []
+  def devide_shots_by_frame
+    shots_by_frame = []
     @marks.each do |mark|
-      sets_of_marks << [] if next_frame?(sets_of_marks)
-      sets_of_marks.last.push(mark)
+      shots_by_frame << [] if next_frame?(shots_by_frame)
+      shots_by_frame.last.push(Shot.new(mark))
     end
 
-    sets_of_marks
+    shots_by_frame
   end
 
-  def next_frame?(sets_of_marks)
-    return true if first_frame?(sets_of_marks)
+  def next_frame?(shots_by_frame)
+    return true if first_frame?(shots_by_frame)
 
-    !last_frame?(sets_of_marks) && (full_shot?(sets_of_marks.last) || strike?(sets_of_marks.last))
+    !last_frame?(shots_by_frame) && (full_shot?(shots_by_frame.last) || strike?(shots_by_frame.last))
   end
 
-  def first_frame?(sets_of_marks)
-    sets_of_marks.size.zero?
+  def first_frame?(shots_by_frame)
+    shots_by_frame.empty?
   end
 
-  def last_frame?(sets_of_marks)
-    sets_of_marks.size == TOTAL_FRAME_COUNTS
+  def last_frame?(shots_by_frame)
+    shots_by_frame.size == TOTAL_FRAME_COUNTS
   end
 
-  def full_shot?(sets_of_marks)
-    sets_of_marks.size == SHOT_COUNTS_BY_FRAME
+  def full_shot?(shots_by_frame)
+    shots_by_frame.size == SHOT_COUNTS_BY_FRAME
   end
 
-  def strike?(set_of_marks)
-    set_of_marks.first == 'X'
+  def strike?(shots_by_frame)
+    shots_by_frame[0].all_pins?
   end
 end
