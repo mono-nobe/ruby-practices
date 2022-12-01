@@ -4,12 +4,6 @@ require 'test/unit'
 require_relative '../src/game'
 
 class TestCaseGame < Test::Unit::TestCase
-  # test 'gameの生成' do
-  #   game = Game.new(['6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,6,4,5'])
-  #   assert_equal %w[6 3 9 0 0 3 8 2 7 3 X 9 1 8 0 X 6 4 5],
-  #                game.marks
-  # end
-
   test '6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,6,4,5の場合' do
     game = Game.new(['6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,6,4,5'])
     assert_equal 139, game.calc_score
