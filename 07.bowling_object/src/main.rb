@@ -3,7 +3,7 @@
 require_relative './game'
 
 def main
-  game = Game.new(ARGV)
+  game = Game.new(ARGV.shift)
   puts game.calc_score
 end
 

@@ -7,7 +7,7 @@ SHOT_COUNTS_BY_FRAME = 2
 
 class Game
   def initialize(marks)
-    @marks = marks.shift.split(',')
+    @marks = marks.split(',')
     @frames = devide_marks_by_frame.map do |set_of_marks_by_frame|
       Frame.new(set_of_marks_by_frame)
     end
