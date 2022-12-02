@@ -3,10 +3,10 @@
 require_relative './frame'
 require_relative './shot'
 
-TOTAL_FRAME_COUNTS = 10
-SHOT_COUNTS_BY_FRAME = 2
-
 class Game
+  TOTAL_FRAME_COUNTS = 10
+  SHOT_COUNTS_BY_FRAME = 2
+
   def initialize(marks)
     @marks = marks.split(',')
     @frames = devide_shots_by_frame.map do |shots_by_frame|

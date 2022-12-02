@@ -2,9 +2,9 @@
 
 require_relative './shot'
 
-MAX_PIN_COUNTS_BY_FRAME = 10
-
 class Frame
+  MAX_PIN_COUNTS_BY_FRAME = 10
+
   attr_reader :shots
 
   def initialize(shots)
