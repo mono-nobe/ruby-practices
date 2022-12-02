@@ -18,6 +18,8 @@ class Frame
     frame_score
   end
 
+  protected
+
   def calc_score_without_bonus
     @shots.sum(&:score)
   end

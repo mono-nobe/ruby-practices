@@ -5,43 +5,49 @@ require_relative '../src/frame'
 require_relative '../src/shot'
 
 class TestCaseFrame < Test::Unit::TestCase
-  test '1回目3本、2回目5本倒した時のスコア' do
-    first_shot = Shot.new(3)
-    second_shot = Shot.new(5)
-    frame = Frame.new([first_shot, second_shot])
-    assert_equal 8, frame.calc_score_without_bonus
+  test '8フレーム目(9フレームではない)でストライクだった時のスコア' do
+    first_shot_for_eight_frame = Shot.new('X')
+    first_shot_for_nine_frame = Shot.new(4)
+    second_shot_for_nine_frame = Shot.new(5)
+    first_shot_for_ten_frame = Shot.new(1)
+    second_shot_for_ten_frame = Shot.new(2)
+    third_shot_for_ten_frame = Shot.new(3)
+
+    target_frame = Frame.new([first_shot_for_eight_frame])
+    leftover_frames =
+      [
+        target_frame,
+        Frame.new([first_shot_for_nine_frame, second_shot_for_nine_frame]),
+        Frame.new([first_shot_for_ten_frame, second_shot_for_ten_frame, third_shot_for_ten_frame])
+      ]
+
+    assert_equal 19, target_frame.calc_score(leftover_frames)
   end
 
-  test 'スペアである' do
-    first_shot = Shot.new(4)
-    second_shot = Shot.new(6)
-    frame = Frame.new([first_shot, second_shot])
-    assert frame.spare?
+  test '9フレーム目でストライクだった時のスコア' do
+    first_shot_for_nine_frame = Shot.new('X')
+    first_shot_for_ten_frame = Shot.new(1)
+    second_shot_for_ten_frame = Shot.new(2)
+    third_shot_for_ten_frame = Shot.new(3)
+
+    target_frame = Frame.new([first_shot_for_nine_frame])
+    leftover_frames =
+      [
+        target_frame,
+        Frame.new([first_shot_for_ten_frame, second_shot_for_ten_frame, third_shot_for_ten_frame])
+      ]
+
+    assert_equal 13, target_frame.calc_score(leftover_frames)
   end
 
-  test 'スペアではない' do
-    first_shot = Shot.new(1)
-    second_shot = Shot.new(2)
-    frame = Frame.new([first_shot, second_shot])
-    refute frame.spare?
-  end
+  test '10フレーム目でストライクだった時のスコア' do
+    first_shot_for_ten_frame = Shot.new('X')
+    second_shot_for_ten_frame = Shot.new('X')
+    third_shot_for_ten_frame = Shot.new('X')
 
-  test 'スペアではない(1球目で10本倒す)' do
-    first_shot = Shot.new('X')
-    frame = Frame.new([first_shot])
-    refute frame.spare?
-  end
+    target_frame = Frame.new([first_shot_for_ten_frame, second_shot_for_ten_frame, third_shot_for_ten_frame])
+    leftover_frames = [target_frame]
 
-  test 'ストライクである' do
-    first_shot = Shot.new('X')
-    frame = Frame.new([first_shot])
-    assert frame.strike?
-  end
-
-  test 'ストライクではない' do
-    first_shot = Shot.new(3)
-    second_shot = Shot.new(3)
-    frame = Frame.new([first_shot, second_shot])
-    refute frame.strike?
+    assert_equal 30, target_frame.calc_score(leftover_frames)
   end
 end
