@@ -7,8 +7,9 @@ class Game
   TOTAL_FRAME_COUNTS = 10
   SHOT_COUNTS_BY_FRAME = 2
 
-  def initialize(marks)
-    @frames = devide_shots_by_frame(marks.split(',')).map do |shots_by_frame|
+  def initialize(mark_text)
+    marks = mark_text.split(',')
+    @frames = split_shots_by_frame(marks).map do |shots_by_frame|
       Frame.new(shots_by_frame)
     end
   end
@@ -21,7 +22,7 @@ class Game
 
   private
 
-  def devide_shots_by_frame(marks)
+  def split_shots_by_frame(marks)
     shots_by_frame = []
     marks.each do |mark|
       shots_by_frame << [] if next_frame?(shots_by_frame)
