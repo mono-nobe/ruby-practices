@@ -13,8 +13,6 @@ class Shot
   end
 
   def score
-    return MAX_PIN_COUNTS_BY_FRAME if @mark == ALL_PINS_MARK
-
-    @mark.to_i
+    all_pins? ? MAX_PIN_COUNTS_BY_FRAME : @mark.to_i
   end
 end
