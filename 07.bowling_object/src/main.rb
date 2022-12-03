@@ -2,9 +2,5 @@
 
 require_relative './game'
 
-def main
-  game = Game.new(ARGV.shift)
-  puts game.calc_score
-end
-
-main
+game = Game.new(ARGV.shift)
+puts game.calc_score
