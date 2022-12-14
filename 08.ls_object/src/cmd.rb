@@ -13,12 +13,19 @@ class Cmd
   end
 
   def show_option
-    puts '### show_option ###'
-    puts @option_a ? 'hoge' : 'piyo'
-    puts @option_r ? 'hoge' : 'piyo'
-    puts @option_l ? 'hoge' : 'piyo'
+    place = Place.new
 
-    dir = Place.new
-    dir.test_place
+    equipments = @option_a ? place.equipments : place.extract_non_hidden_equipents
+    equipments.reverse! if @option_r
+
+    if @option_l
+      total_blocks = equipments.sum(&:blocks)
+      puts "total #{total_blocks}"
+      puts place.format_details(equipments)
+    else
+      place.format_names(equipments).each do |name_row|
+        puts name_row.join
+      end
+    end
   end
 end
