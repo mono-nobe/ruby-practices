@@ -12,7 +12,7 @@ class Cmd
     opt.parse!(ARGV)
   end
 
-  def show_option
+  def exec
     place = Place.new
 
     equipments = @option_a ? place.equipments : place.extract_non_hidden_equipents
