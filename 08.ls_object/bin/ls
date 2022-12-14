@@ -5,4 +5,4 @@ require 'optparse'
 require_relative '../src/cmd'
 
 cmd = Cmd.new
-cmd.exec
+cmd.show_files
