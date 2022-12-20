@@ -41,22 +41,22 @@ class Command
     end
   end
 
-  def format_details(files)
-    files.each_with_object([]) do |file, details|
-      details << file.format_detail(
-        file,
-        calc_prop_max_length(files, 'hard_link'),
-        calc_prop_max_length(files, 'user_name'),
-        calc_prop_max_length(files, 'group_name'),
-        calc_prop_max_length(files, 'size')
+  def format_details(equipments)
+    equipments.each_with_object([]) do |equipment, details|
+      details << equipment.format_detail(
+        equipment,
+        calc_prop_max_length(equipments, 'hard_link'),
+        calc_prop_max_length(equipments, 'user_name'),
+        calc_prop_max_length(equipments, 'group_name'),
+        calc_prop_max_length(equipments, 'size')
       )
     end
   end
 
-  def format_names(files)
-    name_max_length = calc_prop_max_length(files, 'name')
-    names = files.map do |file|
-      file.name.ljust(name_max_length + 1)
+  def format_names(equipments)
+    name_max_length = calc_prop_max_length(equipments, 'name')
+    names = equipments.map do |equipment|
+      equipment.name.ljust(name_max_length + 1)
     end
 
     row_count = (names.size / COLUMN_COUNT.to_f).ceil
@@ -66,9 +66,9 @@ class Command
     end.transpose
   end
 
-  def calc_prop_max_length(files, prop_name)
-    files.map do |file|
-      file.send(prop_name).to_s
+  def calc_prop_max_length(equipments, prop_name)
+    equipments.map do |equipment|
+      equipment.send(prop_name).to_s
     end.max_by(&:length).length
   end
 end
