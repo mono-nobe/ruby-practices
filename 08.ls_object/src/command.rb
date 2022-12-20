@@ -19,15 +19,15 @@ class Command
   end
 
   def show_files
-    equipments = @option_a ? @equipments : extract_non_hidden_equipents
-    equipments.reverse! if @option_r
+    target_equipments = @option_a ? @equipments : extract_non_hidden_equipents
+    target_equipments.reverse! if @option_r
 
     if @option_l
-      total_blocks = equipments.sum(&:blocks)
+      total_blocks = target_equipments.sum(&:blocks)
       puts "total #{total_blocks}"
-      puts format_details(equipments)
+      puts format_details(target_equipments)
     else
-      format_names(equipments).each do |name_row|
+      format_names(target_equipments).each do |name_row|
         puts name_row.join
       end
     end
