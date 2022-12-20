@@ -3,7 +3,7 @@
 
 require_relative './place'
 
-class Cmd
+class Command
   def initialize
     opt = OptionParser.new
     opt.on('-a') { @option_a = true }

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require_relative '../src/cmd'
+require_relative '../src/command'
 
-cmd = Cmd.new
-cmd.show_files
+command = Command.new
+command.show_files
