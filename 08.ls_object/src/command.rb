@@ -12,22 +12,18 @@ class Command
     opt.on('-r') { @option_r = true }
     opt.on('-l') { @option_l = true }
     opt.parse!(ARGV)
-
-    @ls_files = Dir.glob('*', File::FNM_DOTMATCH).map do |name|
-      LsFile.new(name)
-    end
   end
 
   def show_files
-    target_ls_files = @option_a ? @ls_files : extract_non_hidden_equipents
-    target_ls_files.reverse! if @option_r
+    ls_files = extract_ls_files
+    ls_files.reverse! if @option_r
 
     if @option_l
-      total_blocks = target_ls_files.sum(&:blocks)
+      total_blocks = ls_files.sum(&:blocks)
       puts "total #{total_blocks}"
-      puts format_details(target_ls_files)
+      puts format_details(ls_files)
     else
-      format_names(target_ls_files).each do |name_row|
+      format_names(ls_files).each do |name_row|
         puts name_row.join
       end
     end
@@ -35,10 +31,12 @@ class Command
 
   private
 
-  def extract_non_hidden_equipents
-    @ls_files.each_with_object([]) do |ls_file, hidden_ls_files|
-      hidden_ls_files << ls_file unless ls_file.name.start_with?('.')
-    end
+  def extract_ls_files
+    Dir.glob('*', File::FNM_DOTMATCH).map do |name|
+      next if !@option_a && name.start_with?('.')
+
+      LsFile.new(name)
+    end.compact
   end
 
   def format_details(ls_files)
