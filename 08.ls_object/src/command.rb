@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative './equipment'
+require_relative './ls_file'
 
 class Command
   COLUMN_COUNT = 3
@@ -13,21 +13,21 @@ class Command
     opt.on('-l') { @option_l = true }
     opt.parse!(ARGV)
 
-    @equipments = Dir.glob('*', File::FNM_DOTMATCH).map do |name|
-      Equipment.new(name)
+    @ls_files = Dir.glob('*', File::FNM_DOTMATCH).map do |name|
+      LsFile.new(name)
     end
   end
 
   def show_files
-    target_equipments = @option_a ? @equipments : extract_non_hidden_equipents
-    target_equipments.reverse! if @option_r
+    target_ls_files = @option_a ? @ls_files : extract_non_hidden_equipents
+    target_ls_files.reverse! if @option_r
 
     if @option_l
-      total_blocks = target_equipments.sum(&:blocks)
+      total_blocks = target_ls_files.sum(&:blocks)
       puts "total #{total_blocks}"
-      puts format_details(target_equipments)
+      puts format_details(target_ls_files)
     else
-      format_names(target_equipments).each do |name_row|
+      format_names(target_ls_files).each do |name_row|
         puts name_row.join
       end
     end
@@ -36,27 +36,27 @@ class Command
   private
 
   def extract_non_hidden_equipents
-    @equipments.each_with_object([]) do |equipment, hidden_equipments|
-      hidden_equipments << equipment unless equipment.name.start_with?('.')
+    @ls_files.each_with_object([]) do |ls_file, hidden_ls_files|
+      hidden_ls_files << ls_file unless ls_file.name.start_with?('.')
     end
   end
 
-  def format_details(equipments)
-    equipments.each_with_object([]) do |equipment, details|
-      details << equipment.format_detail(
-        equipment,
-        calc_prop_max_length(equipments, 'hard_link'),
-        calc_prop_max_length(equipments, 'user_name'),
-        calc_prop_max_length(equipments, 'group_name'),
-        calc_prop_max_length(equipments, 'size')
+  def format_details(ls_files)
+    ls_files.each_with_object([]) do |ls_file, details|
+      details << ls_file.format_detail(
+        ls_file,
+        calc_prop_max_length(ls_files, 'hard_link'),
+        calc_prop_max_length(ls_files, 'user_name'),
+        calc_prop_max_length(ls_files, 'group_name'),
+        calc_prop_max_length(ls_files, 'size')
       )
     end
   end
 
-  def format_names(equipments)
-    name_max_length = calc_prop_max_length(equipments, 'name')
-    names = equipments.map do |equipment|
-      equipment.name.ljust(name_max_length + 1)
+  def format_names(ls_files)
+    name_max_length = calc_prop_max_length(ls_files, 'name')
+    names = ls_files.map do |ls_file|
+      ls_file.name.ljust(name_max_length + 1)
     end
 
     row_count = (names.size / COLUMN_COUNT.to_f).ceil
@@ -66,9 +66,9 @@ class Command
     end.transpose
   end
 
-  def calc_prop_max_length(equipments, prop_name)
-    equipments.map do |equipment|
-      equipment.send(prop_name).to_s
+  def calc_prop_max_length(ls_files, prop_name)
+    ls_files.map do |ls_file|
+      ls_file.send(prop_name).to_s
     end.max_by(&:length).length
   end
 end

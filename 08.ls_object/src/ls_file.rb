@@ -2,7 +2,7 @@
 
 require 'etc'
 
-class Equipment
+class LsFile
   FILE_TYPE = {
     '1' => 'p',
     '2' => 'c',
