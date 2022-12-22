@@ -16,14 +16,14 @@ class Command
 
   def show_files
     ls_files = extract_ls_files
-    ls_files.reverse! if @option_r
+    target_ls_files = @option_r ? ls_files.reverse : ls_files
 
     if @option_l
-      total_blocks = ls_files.sum(&:blocks)
+      total_blocks = target_ls_files.sum(&:blocks)
       puts "total #{total_blocks}"
-      puts box_details(ls_files)
+      puts box_details(target_ls_files)
     else
-      box_names(ls_files).each do |name_row|
+      box_names(target_ls_files).each do |name_row|
         puts name_row.join
       end
     end
