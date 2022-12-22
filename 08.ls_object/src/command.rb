@@ -39,9 +39,21 @@ class Command
     end.compact
   end
 
+  def format_detail(ls_file, hard_link_length, user_name_length, group_name_length, size_length)
+    symbolic_mode = ls_file.symbolic_mode
+    hard_link = ls_file.hard_link.to_s.rjust(hard_link_length)
+    user_name = ls_file.user_name.ljust(user_name_length)
+    group_name = ls_file.group_name.ljust(group_name_length)
+    size = ls_file.size.to_s.rjust(size_length)
+    updated_time = ls_file.updated_time
+    name = ls_file.name
+
+    "#{symbolic_mode}  #{hard_link} #{user_name}  #{group_name}  #{size} #{updated_time} #{name}"
+  end
+
   def format_details(ls_files)
     ls_files.each_with_object([]) do |ls_file, details|
-      details << ls_file.format_detail(
+      details << format_detail(
         ls_file,
         calc_prop_max_length(ls_files, 'hard_link'),
         calc_prop_max_length(ls_files, 'user_name'),

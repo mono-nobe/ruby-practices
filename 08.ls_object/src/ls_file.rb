@@ -64,16 +64,4 @@ class LsFile
 
     symbolic_type + symbolic_permissions.join
   end
-
-  def format_detail(equipment, hard_link_length, user_name_length, group_name_length, size_length)
-    symbolic_mode = equipment.symbolic_mode
-    hard_link = equipment.hard_link.to_s.rjust(hard_link_length)
-    user_name = equipment.user_name.ljust(user_name_length)
-    group_name = equipment.group_name.ljust(group_name_length)
-    size = equipment.size.to_s.rjust(size_length)
-    updated_time = equipment.updated_time
-    name = equipment.name
-
-    "#{symbolic_mode}  #{hard_link} #{user_name}  #{group_name}  #{size} #{updated_time} #{name}"
-  end
 end
