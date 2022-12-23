@@ -45,15 +45,15 @@ class Command
     group_names = get_prop_strings(ls_files, 'group_name')
     sizes = get_prop_strings(ls_files, 'size')
 
-    prop_max_lengths = {
-      hard_link: calc_prop_max_length(hard_links),
-      user_name: calc_prop_max_length(user_names),
-      group_name: calc_prop_max_length(group_names),
-      size: calc_prop_max_length(sizes)
+    max_prop_lengths = {
+      hard_link: detect_max_prop_length(hard_links),
+      user_name: detect_max_prop_length(user_names),
+      group_name: detect_max_prop_length(group_names),
+      size: detect_max_prop_length(sizes)
     }
 
     ls_files.map do |ls_file|
-      format_detail(ls_file, prop_max_lengths)
+      format_detail(ls_file, max_prop_lengths)
     end
   end
 
@@ -63,12 +63,12 @@ class Command
     end
   end
 
-  def format_detail(ls_file, prop_max_lengths)
+  def format_detail(ls_file, max_prop_lengths)
     symbolic_mode = ls_file.symbolic_mode
-    hard_link = ls_file.hard_link.to_s.rjust(prop_max_lengths[:hard_link])
-    user_name = ls_file.user_name.ljust(prop_max_lengths[:user_name])
-    group_name = ls_file.group_name.ljust(prop_max_lengths[:group_name])
-    size = ls_file.size.to_s.rjust(prop_max_lengths[:size])
+    hard_link = ls_file.hard_link.to_s.rjust(max_prop_lengths[:hard_link])
+    user_name = ls_file.user_name.ljust(max_prop_lengths[:user_name])
+    group_name = ls_file.group_name.ljust(max_prop_lengths[:group_name])
+    size = ls_file.size.to_s.rjust(max_prop_lengths[:size])
     updated_time = ls_file.updated_time
     name = ls_file.name
 
@@ -87,9 +87,9 @@ class Command
   end
 
   def format_names(names)
-    name_max_length = calc_prop_max_length(names)
+    max_name_length = detect_max_prop_length(names)
     names.map do |name|
-      name.ljust(name_max_length + 1)
+      name.ljust(max_name_length + 1)
     end
   end
 
@@ -102,7 +102,7 @@ class Command
     row.size < row_count
   end
 
-  def calc_prop_max_length(strings)
+  def detect_max_prop_length(strings)
     strings.max_by(&:length).length
   end
 end
