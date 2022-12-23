@@ -82,8 +82,7 @@ class Command
     row_count = (names.size / COLUMN_COUNT.to_f).ceil
     formated_name_rows = formated_names.each_slice(row_count)
     formated_name_rows.map do |name_row|
-      name_row << nil while row_full?(name_row, row_count)
-      name_row
+      fill_in_row(name_row, row_count)
     end.transpose
   end
 
@@ -92,6 +91,11 @@ class Command
     names.map do |name|
       name.ljust(name_max_length + 1)
     end
+  end
+
+  def fill_in_row(row, row_count)
+    row << '' while row_full?(row, row_count)
+    row
   end
 
   def row_full?(row, row_count)
