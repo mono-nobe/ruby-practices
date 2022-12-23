@@ -52,7 +52,7 @@ class LsFile
   end
 
   def updated_time
-    @file.mtime.strftime('%m %d %R')
+    @file.mtime
   end
 
   def symbolic_mode

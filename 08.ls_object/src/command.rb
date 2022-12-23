@@ -69,7 +69,7 @@ class Command
     user_name = ls_file.user_name.ljust(max_prop_lengths[:user_name])
     group_name = ls_file.group_name.ljust(max_prop_lengths[:group_name])
     size = ls_file.size.to_s.rjust(max_prop_lengths[:size])
-    updated_time = ls_file.updated_time
+    updated_time = ls_file.updated_time.strftime('%m %d %R')
     name = ls_file.name
 
     "#{symbolic_mode}  #{hard_link} #{user_name}  #{group_name}  #{size} #{updated_time} #{name}"
