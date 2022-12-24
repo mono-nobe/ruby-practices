@@ -20,9 +20,9 @@ class Command
     if @option_l
       total_blocks = ls_files.sum(&:blocks)
       puts "total #{total_blocks}"
-      puts box_details(ls_files)
+      puts list_details(ls_files)
     else
-      box_names(ls_files).each do |name_row|
+      list_names(ls_files).each do |name_row|
         puts name_row.join
       end
     end
@@ -40,7 +40,7 @@ class Command
     @option_r ? extracted_ls_files.reverse : extracted_ls_files
   end
 
-  def box_details(ls_files)
+  def list_details(ls_files)
     hard_links = get_prop_strings(ls_files, 'hard_link')
     user_names = get_prop_strings(ls_files, 'user_name')
     group_names = get_prop_strings(ls_files, 'group_name')
@@ -76,7 +76,7 @@ class Command
     "#{symbolic_mode}  #{hard_link} #{user_name}  #{group_name}  #{size} #{updated_time} #{name}"
   end
 
-  def box_names(ls_files)
+  def list_names(ls_files)
     names = ls_files.map(&:name)
     formated_names = format_names(names)
 
