@@ -41,26 +41,15 @@ class Command
   end
 
   def list_details(ls_files)
-    hard_links = get_prop_strings(ls_files, 'hard_link')
-    user_names = get_prop_strings(ls_files, 'user_name')
-    group_names = get_prop_strings(ls_files, 'group_name')
-    sizes = get_prop_strings(ls_files, 'size')
-
     max_prop_lengths = {
-      hard_link: detect_max_prop_length(hard_links),
-      user_name: detect_max_prop_length(user_names),
-      group_name: detect_max_prop_length(group_names),
-      size: detect_max_prop_length(sizes)
+      hard_link: detect_max_prop_length(ls_files) { |ls_file| ls_file.hard_link.to_s },
+      user_name: detect_max_prop_length(ls_files, &:user_name),
+      group_name: detect_max_prop_length(ls_files, &:group_name),
+      size: detect_max_prop_length(ls_files) { |ls_file| ls_file.size.to_s }
     }
 
     ls_files.map do |ls_file|
       format_detail(ls_file, max_prop_lengths)
-    end
-  end
-
-  def get_prop_strings(ls_files, prop_name)
-    ls_files.map do |ls_file|
-      ls_file.send(prop_name).to_s
     end
   end
 
@@ -77,20 +66,19 @@ class Command
   end
 
   def list_names(ls_files)
-    names = ls_files.map(&:name)
-    formated_names = format_names(names)
+    formated_names = format_names(ls_files)
 
-    row_count = (names.size / COLUMN_COUNT.to_f).ceil
+    row_count = (formated_names.size / COLUMN_COUNT.to_f).ceil
     formated_name_rows = formated_names.each_slice(row_count)
     formated_name_rows.map do |name_row|
       fill_in_row(name_row, row_count)
     end.transpose
   end
 
-  def format_names(names)
-    max_name_length = detect_max_prop_length(names)
-    names.map do |name|
-      name.ljust(max_name_length + 1)
+  def format_names(ls_files)
+    max_name_length = detect_max_prop_length(ls_files, &:name)
+    ls_files.map do |ls_file|
+      ls_file.name.ljust(max_name_length + 1)
     end
   end
 
@@ -103,7 +91,7 @@ class Command
     row.size < row_count
   end
 
-  def detect_max_prop_length(strings)
-    strings.max_by(&:length).length
+  def detect_max_prop_length(ls_files, &block)
+    ls_files.map(&block).max_by(&:length).length
   end
 end
