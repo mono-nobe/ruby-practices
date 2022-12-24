@@ -70,9 +70,11 @@ class Command
 
     row_count = (formated_names.size / COLUMN_COUNT.to_f).ceil
     formated_name_rows = formated_names.each_slice(row_count)
-    formated_name_rows.map do |name_row|
-      fill_in_row(name_row, row_count)
-    end.transpose
+    filled_formated_name_rows = formated_name_rows.map do |formated_name_row|
+      fill_in_row(formated_name_row, row_count)
+    end
+
+    filled_formated_name_rows.transpose
   end
 
   def format_names(ls_files)
