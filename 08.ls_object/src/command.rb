@@ -16,14 +16,13 @@ class Command
 
   def show_files
     ls_files = extract_ls_files
-    target_ls_files = @option_r ? ls_files.reverse : ls_files
 
     if @option_l
-      total_blocks = target_ls_files.sum(&:blocks)
+      total_blocks = ls_files.sum(&:blocks)
       puts "total #{total_blocks}"
-      puts box_details(target_ls_files)
+      puts box_details(ls_files)
     else
-      box_names(target_ls_files).each do |name_row|
+      box_names(ls_files).each do |name_row|
         puts name_row.join
       end
     end
@@ -32,11 +31,13 @@ class Command
   private
 
   def extract_ls_files
-    Dir.glob('*', File::FNM_DOTMATCH).filter_map do |name|
+    extracted_ls_files = Dir.glob('*', File::FNM_DOTMATCH).filter_map do |name|
       next if !@option_a && name.start_with?('.')
 
       LsFile.new(name)
     end
+
+    @option_r ? extracted_ls_files.reverse : extracted_ls_files
   end
 
   def box_details(ls_files)
