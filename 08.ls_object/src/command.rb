@@ -69,7 +69,9 @@ class Command
     row_count = (formated_names.size / COLUMN_COUNT.to_f).ceil
     formated_name_rows = formated_names.each_slice(row_count)
     filled_formated_name_rows = formated_name_rows.map do |formated_name_row|
-      fill_in_row(formated_name_row, row_count)
+      branks = []
+      branks << '' while row_full?(formated_name_row + branks, row_count)
+      formated_name_row + branks
     end
 
     filled_formated_name_rows.transpose
@@ -80,11 +82,6 @@ class Command
     ls_files.map do |ls_file|
       ls_file.name.ljust(max_name_length + 1)
     end
-  end
-
-  def fill_in_row(row, row_count)
-    row << '' while row_full?(row, row_count)
-    row
   end
 
   def row_full?(row, row_count)
