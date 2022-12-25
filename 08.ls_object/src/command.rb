@@ -42,10 +42,10 @@ class Command
 
   def list_details(ls_files)
     max_prop_lengths = {
-      hard_link: detect_max_prop_length(ls_files) { |ls_file| ls_file.hard_link.to_s },
+      hard_link: detect_max_prop_length(ls_files, &:hard_link),
       user_name: detect_max_prop_length(ls_files, &:user_name),
       group_name: detect_max_prop_length(ls_files, &:group_name),
-      size: detect_max_prop_length(ls_files) { |ls_file| ls_file.size.to_s }
+      size: detect_max_prop_length(ls_files, &:size)
     }
 
     ls_files.map do |ls_file|
@@ -93,7 +93,14 @@ class Command
     row.size < row_count
   end
 
-  def detect_max_prop_length(ls_files, &block)
-    ls_files.map(&block).max_by(&:length).length
+  def detect_max_prop_length(ls_files)
+    max_ls_file = ls_files.max_by do |ls_file|
+      yield ls_file
+      prop = yield ls_file
+      prop.to_s.length
+    end
+
+    max_prop = yield max_ls_file
+    max_prop.to_s.length
   end
 end
