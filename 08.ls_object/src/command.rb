@@ -31,13 +31,13 @@ class Command
   private
 
   def extract_ls_files
-    extracted_ls_files = Dir.glob('*', File::FNM_DOTMATCH).filter_map do |name|
+    ls_files = Dir.glob('*', File::FNM_DOTMATCH).filter_map do |name|
       next if !@option_a && name.start_with?('.')
 
       LsFile.new(name)
     end
 
-    @option_r ? extracted_ls_files.reverse : extracted_ls_files
+    @option_r ? ls_files.reverse : ls_files
   end
 
   def list_details(ls_files)
