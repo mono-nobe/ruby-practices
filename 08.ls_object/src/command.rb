@@ -69,9 +69,9 @@ class Command
     row_count = (formated_names.size / COLUMN_COUNT.to_f).ceil
     formated_name_rows = formated_names.each_slice(row_count)
     filled_formated_name_rows = formated_name_rows.map do |formated_name_row|
-      branks = []
-      branks << '' while row_full?(formated_name_row + branks, row_count)
-      formated_name_row + branks
+      blanks = []
+      blanks << '' while row_full?(formated_name_row + blanks, row_count)
+      formated_name_row + blanks
     end
 
     filled_formated_name_rows.transpose
