@@ -85,13 +85,9 @@ class Command
   end
 
   def detect_max_prop_length(ls_files)
-    max_ls_file = ls_files.max_by do |ls_file|
-      yield ls_file
+    ls_files.map do |ls_file|
       prop = yield ls_file
       prop.to_s.length
-    end
-
-    max_prop = yield max_ls_file
-    max_prop.to_s.length
+    end.max
   end
 end
