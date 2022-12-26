@@ -69,8 +69,8 @@ class Command
     row_count = (formated_names.size / COLUMN_COUNT.to_f).ceil
     formated_name_rows = formated_names.each_slice(row_count)
     filled_formated_name_rows = formated_name_rows.map do |formated_name_row|
-      blanks = []
-      blanks << '' while row_full?(formated_name_row + blanks, row_count)
+      missing_count = row_count - formated_name_row.size
+      blanks = Array.new(missing_count, '')
       formated_name_row + blanks
     end
 
@@ -82,10 +82,6 @@ class Command
     ls_files.map do |ls_file|
       ls_file.name.ljust(max_name_length + 1)
     end
-  end
-
-  def row_full?(row, row_count)
-    row.size < row_count
   end
 
   def detect_max_prop_length(ls_files)
